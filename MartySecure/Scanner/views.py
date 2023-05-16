@@ -1,0 +1,95 @@
+import socket
+from django.shortcuts import render
+from django.http import HttpResponse
+from .models import Vulnerability
+
+from rest_framework import generics
+from .serializers import ValidatedResultSerializer
+from .models import ValidatedResult
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django_otp.forms import OTPAuthenticationForm
+from .forms import MFASetupForm
+
+
+class ValidatedResultList(generics.ListAPIView):
+    queryset = ValidatedResult.objects.all()
+    serializer_class = ValidatedResultSerializer
+
+
+def port_scan(request):
+    host = 'google.com'  # IP-adres om te scannen
+    ports = [80, 443, 8080]  # Poorten om te scannen
+    results = []
+
+    for port in ports:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            s.connect((host, port))
+            banner = banner_grabbing(host, port)
+            results.append({'port': port, 'status': 'Open', 'banner': banner})
+        except:
+            results.append({'port': port, 'status': 'Dicht', 'banner': ''})
+        s.close()
+
+    context = {'results': results}
+    return render(request, 'port_scan.html', context)
+
+
+def banner_grabbing(host, port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((host, port))
+    s.send(b"GET / HTTP/1.1\r\nHost: " + host.encode() + b"\r\n\r\n")
+    banner = s.recv(1024).decode()
+    s.close()
+    return banner
+
+
+def validate_results(results):
+    vulnerabilities = Vulnerability.objects.all()
+    validated_results = []
+
+    for result in results:
+        for vulnerability in vulnerabilities:
+            if (result['service'] in vulnerability.services.split(',') and
+                    result['version'] == vulnerability.version):
+                validated_results.append({
+                    'port': result['port'],
+                    'service': result['service'],
+                    'version': result['version'],
+                    'vulnerability': vulnerability.name,
+                    'description': vulnerability.description,
+                    'severity': vulnerability.severity
+                })
+
+    return validated_results
+
+
+@login_required
+def mfa_setup(request):
+    if request.user.is_verified():
+        return redirect('home')
+    if request.method == 'POST':
+        form = MFASetupForm(request.POST)
+        if form.is_valid():
+            request.user.profile.mfa_secret = form.cleaned_data['mfa_secret']
+            request.user.profile.save()
+            return redirect('mfa_authenticate')
+    else:
+        form = MFASetupForm()
+    return render(request, 'mfa/setup.html', {'form': form})
+
+
+@login_required
+def mfa_authenticate(request):
+    if request.user.is_verified():
+        return redirect('home')
+    if request.method == 'POST':
+        form = OTPAuthenticationForm(request.POST)
+        if form.is_valid():
+            request.session['otp_device_id'] = form.cleaned_data['otp_device_id']
+            return redirect('home')
+    else:
+        form = OTPAuthenticationForm()
+    return render(request, 'mfa/authenticate.html', {'form': form})
