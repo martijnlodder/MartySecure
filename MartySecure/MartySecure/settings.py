@@ -28,16 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
-SITE_ID = 1
-
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-
-OTP_TOTP_ISSUER = 'Django Poortscanner'
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -49,18 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Scanner',
     'rest_framework',
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'django_otp',
-    'django_otp.plugins.otp_totp',
-    'django_otp.plugins.otp_static',
-]
-
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 MIDDLEWARE = [
@@ -71,13 +49,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_otp.middleware.OTPMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django_otp.middleware.OTPMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'yourapp.middleware.MFAMiddleware',
 ]
 
 ROOT_URLCONF = 'MartySecure.urls'
