@@ -13,8 +13,12 @@ class ValidatedResultList(generics.ListAPIView):
     serializer_class = ValidatedResultSerializer
 
 
+def index(request):
+    return render(request, 'base.html', {})
+
+
 def port_scan(request):
-    host = 'google.com'  # IP-adres om te scannen
+    host = '127.0.0.1'  # IP-adres om te scannen
     ports = [80, 443, 8080]  # Poorten om te scannen
     results = []
 

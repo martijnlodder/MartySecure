@@ -18,6 +18,7 @@ from django.urls import path
 from Scanner import views
 
 urlpatterns = [
+    path('', views.index, name='index'),
     path('admin/', admin.site.urls),
-    path('port_scan/', views.port_scan, name='port_scan'),
+    path('scanner/', views.port_scan, name='port_scan'),
 ]
