@@ -10,7 +10,6 @@ Als je Git nog niet op je systeem hebt geïnstalleerd, ga dan naar de officiële
 - Clone het GitHub-project:
 Open een terminal of de Git Bash en navigeer naar de gewenste locatie waar je het Django-project wilt opslaan. Gebruik het onderstaande commando om het project van GitHub te klonen:
 
-- Copy code
 ```bash
 git clone <repository-url>
 ```
