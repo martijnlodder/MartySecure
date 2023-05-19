@@ -19,7 +19,6 @@ Vervang <repository-url> door de URL van het GitHub-project dat je wilt download
 - Navigeer naar het project:
 Ga naar de gekloonde map van het project met het volgende commando:
 
-- Copy code
 cd <project-directory>
 Vervang <project-directory> door de naam van de map van het gekloonde project.
 
@@ -27,7 +26,6 @@ Vervang <project-directory> door de naam van de map van het gekloonde project.
 Het is sterk aanbevolen om een virtuele omgeving te maken om de afhankelijkheden van het Django-project geïsoleerd te houden. Voer het volgende commando uit om een virtuele omgeving te maken:
 
 ```bash
-Copy code
 python -m venv myenv
 ```
 Hier wordt myenv vervangen door de naam die je wilt geven aan de virtuele omgeving.
@@ -36,7 +34,6 @@ Activeer de virtuele omgeving:
 Activeer de virtuele omgeving met het volgende commando:
 
 ```bash
-Copy code
 source myenv/bin/activate
 ```
 Op Windows-systemen is het commando voor het activeren van de virtuele omgeving myenv\Scripts\activate.
@@ -45,7 +42,6 @@ Installeer projectafhankelijkheden:
 Nu moet je alle projectafhankelijkheden installeren. Typ het volgende commando:
 
 ```bash
-Copy code
 pip install -r requirements.txt
 ```
 Dit commando installeert alle vereiste pakketten en bibliotheken die in het project zijn gespecificeerd.
@@ -54,7 +50,6 @@ Voer database migraties uit:
 Voer de database migraties uit met behulp van het volgende commando:
 
 ```bash
-Copy code
 python manage.py migrate
 ```
 Dit commando zal de database-schema's maken op basis van de aanwezige migratiebestanden.
@@ -66,7 +61,6 @@ Voeg uw eigen Mailgun accountgegevens toe in settings.py
 Start de ontwikkelingsserver met het volgende commando:
 
 ```bash
-Copy code
 python manage.py runserver
 ```
 
