@@ -1,7 +1,12 @@
 import socket
-from django.shortcuts import render
+from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.http import HttpResponse
 from .models import Vulnerability
+
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -13,15 +18,83 @@ import requests
 from django.core.mail import send_mail
 from django.conf import settings
 
+from rest_framework.decorators import api_view, authentication_classes
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework_jwt.settings import api_settings
+from django.http import JsonResponse # Alleen om te testen
+
 class ValidatedResultList(generics.ListAPIView):
     queryset = ValidatedResult.objects.all()
     serializer_class = ValidatedResultSerializer
 
 
+@authentication_classes([JSONWebTokenAuthentication])
+@login_required
 def index(request):
-    return render(request, 'base.html', {})
+    return render(request, 'base.html', {})  
 
 
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('index')
+    
+    else:
+        if request.method == 'POST':
+            # Verwerk de inloggegevens
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+
+            # Authenticeer de gebruiker
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                # Gebruiker is geldig, log ze in
+                login(request, user)
+
+                # Genereer en retourneer de JWT-token
+                jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+                jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+
+                payload = jwt_payload_handler(user)
+                token = jwt_encode_handler(payload)
+
+                # Testen of de JWT functionaliteit naar behoren werkt
+                # return JsonResponse({'token': token})
+
+                return redirect('index')
+
+        return render(request, 'login.html')
+    
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        if password != confirm_password:
+            error_message = 'Wachtwoorden komen niet overeen'
+            return render(request, 'signup.html', {'error_message': error_message})
+        
+        try:
+            User.objects.get(username=username)
+            error_message = 'Gebruikersnaam is al in gebruik'
+            return render(request, 'signup.html', {'error_message': error_message})
+        except User.DoesNotExist:
+            # Maak een nieuwe gebruiker aan
+            user = User.objects.create_user(username=username, password=password)
+            user.save()
+            return redirect('login')  # Verwijs naar de inlogpagina na succesvolle registratie
+    else:
+        return render(request, 'signup.html')
+    
+    
+@login_required
 def port_scan(request):
     host = 'google.com'  # IP-adres om te scannen
     ports = [22, 21, 53, 80, 443, 8080]  # Poorten om te scannen

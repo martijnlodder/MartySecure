@@ -18,10 +18,14 @@ from django.urls import path
 from Scanner import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.login_view, name='login'),
+    path('home/', views.index, name='index'),
     path('admin/', admin.site.urls),
     path('scanner/', views.port_scan, name='port_scan'),
-    path('api/results/', views.ValidatedResultList.as_view(),
-         name='validated_result_list'),
+    # path('api/results/', views.ValidatedResultList.as_view(),
+    #      name='validated_result_list'),
     path('api/scan/', views.PortScanAPIView.as_view(), name='port_scan'),
+    path('login/', views.login_view, name='login'),
+    path('signup/', views.signup_view, name='signup'),
+    path('logout/', views.logout_view, name='logout'),
 ]

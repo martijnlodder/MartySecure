@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ''
+SECRET_KEY = 'django-insecure-y#styw*+u5a*3x_y72)_pww1=yyf@pfje85c_^_0x0u$qd8f-2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Scanner',
     'rest_framework',
+    'rest_framework_jwt',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'MartySecure.urls'
@@ -127,6 +129,24 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Mailgun API-configuratie
-MAILGUN_API_KEY = ''
-MAILGUN_DOMAIN = ''
-MAILGUN_SENDER = ''
+MAILGUN_API_KEY = 'fed440f67f9b8ac6f651ea98f08ddd0c-db4df449-89015928'
+MAILGUN_DOMAIN = 'sandbox3b42d9610e174dfcaa3e3510b3432357.mailgun.org'
+MAILGUN_SENDER = 'postmaster@sandbox3b42d9610e174dfcaa3e3510b3432357.mailgun.org'
+
+
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 30  # 30 dagen (in seconden)
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_SECURE = True
+LOGIN_REDIRECT_URL = 'index'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ],
+}
+
+JWT_AUTH = {
+    'JWT_SECRET_KEY': '707AO2BY#001@*',
+    'JWT_ALGORITHM': 'HS256',
+    'JWT_ALLOW_REFRESH': True,
+}
